@@ -1,3 +1,28 @@
 body {
   font-family: "Courier New", Courier, monospace;
+  margin: 3rem;
+  line-height: 2rem;
+}
+
+h1 {
+  text-align: center;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.selected > a {
+  background-color: rgb(251, 162, 162);
+}
+#restaurants-list {
+  cursor: pointer;
+}
+#orders {
+  display: flex;
+}
+
+#orders > li {
+  flex: 0.3;
 }
