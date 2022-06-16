@@ -4,6 +4,7 @@ const state = {};
 const usersList = document.querySelector("#users-list");
 const restaurantsList = document.querySelector("#restaurants-list");
 const ordersList = document.querySelector("#orders-list");
+const menu = document.querySelector("#menu-list");
 
 window.addEventListener("hashchange", async () => {
   renderUsers();
@@ -25,17 +26,33 @@ ordersList.addEventListener("click", async (ev) => {
 restaurantsList.addEventListener("click", async (ev) => {
   if (ev.target.tagName === "LI") {
     const restaurantId = ev.target.getAttribute("data-id");
-
+    ev.target.className = "restaurant";
     await fetchMeals(restaurantId);
     renderMeals(restaurantId);
     renderRestaurants();
   }
 });
-// menu.addEventListener("click", (ev) => {
-//   if (ev.target.tagName === "BUTTON") {
-//     const mealId = ev.target.getAttribute("data-id");
-//   }
-// });
+
+menu.addEventListener("click", async (ev) => {
+  if (ev.target.tagName === "BUTTON") {
+    const mealId = ev.target.getAttribute("data-id");
+    const userId = window.location.hash.slice(1);
+    const meal = state.meals.find((meal) => meal.id === mealId);
+    const restaurantId = meal.restaurantId;
+    await fetchMeals(restaurantId);
+    if (!userId) {
+      return;
+    }
+    const response = await axios.post(`/api/users/${userId}/orders`, {
+      mealId,
+    });
+
+    const order = response.data;
+    state.orders.push(order);
+    renderMeals(restaurantId);
+    renderOrders();
+  }
+});
 
 const fetchUsers = async () => {
   const response = await axios.get("/api/users");
@@ -54,8 +71,12 @@ const fetchMeals = async (id) => {
 
 const fetchOrders = async () => {
   const userId = window.location.hash.slice(1);
-  const response = await axios.get(`/api/users/${userId}/orders`);
-  state.orders = response.data;
+  if (userId) {
+    const response = await axios.get(`/api/users/${userId}/orders`);
+    state.orders = response.data;
+  } else {
+    state.orders = [];
+  }
 };
 
 const renderUsers = () => {
@@ -74,10 +95,7 @@ const renderRestaurants = () => {
   const html = state.restaurants
     .map((restaurant) => {
       return `
-          <li data-id='${restaurant.id}'>${restaurant.name}
-          <ul data-id='${restaurant.id}' class="menu">
-          </ul>
-          </li>
+          <li data-id='${restaurant.id}'>${restaurant.name}</li>
          `;
     })
     .join("");
@@ -85,15 +103,15 @@ const renderRestaurants = () => {
 };
 
 const renderMeals = (id) => {
-  return state.meals
+  const html = state.meals
     .filter((meal) => id === meal.restaurantId)
     .map((meal) => {
       return `
       <li>${meal.name} $${meal.price} <button data-id='${meal.id}'>+</button></li>
-
       `;
     })
     .join("");
+  menu.innerHTML = html;
 };
 
 const renderOrders = () => {

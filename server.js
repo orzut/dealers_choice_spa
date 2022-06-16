@@ -29,6 +29,7 @@ app.get("/api/restaurants/:restaurantId/menu", async (req, res, next) => {
     res.send(
       await Meal.findAll({
         where: { restaurantId: req.params.restaurantId },
+        include: [Restaurant],
       })
     );
   } catch (ex) {
@@ -41,7 +42,7 @@ app.get("/api/users/:userId/orders", async (req, res, next) => {
     res.send(
       await Order.findAll({
         where: { userId: req.params.userId },
-        include: [User, Restaurant, Meal],
+        include: [User, Meal],
       })
     );
   } catch (ex) {
@@ -54,8 +55,7 @@ app.post("/api/users/:userId/orders", async (req, res, next) => {
     res.status(201).send(
       await Order.create({
         userId: req.params.userId,
-        restaurantId: req.params.restaurantId,
-        mealId: req.params.mealId,
+        mealId: req.body.mealId,
       })
     );
   } catch (ex) {

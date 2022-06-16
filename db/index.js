@@ -65,7 +65,6 @@ const Order = db.define("order", {
 });
 
 Order.belongsTo(User);
-Order.belongsTo(Restaurant);
 Order.belongsTo(Meal);
 Meal.belongsTo(Restaurant);
 
@@ -116,22 +115,18 @@ const syncAndSeed = async () => {
   await Promise.all([
     Order.create({
       userId: anna.id,
-      restaurantId: napolitana.id,
       mealId: pizza.id,
     }),
     Order.create({
       userId: jack.id,
-      restaurantId: mercadito.id,
       mealId: taco.id,
     }),
     Order.create({
       userId: catalina.id,
-      restaurantId: taxim.id,
       mealId: gyro.id,
     }),
     Order.create({
       userId: chris.id,
-      restaurantId: kizuki.id,
       mealId: ramen.id,
     }),
   ]);

@@ -16,6 +16,9 @@ a {
 .selected > a {
   background-color: rgb(251, 162, 162);
 }
+li .restaurant {
+  background-color: rgb(249, 229, 131);
+}
 #restaurants-list {
   cursor: pointer;
 }
